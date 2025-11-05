@@ -14,6 +14,12 @@ export default [
         console: 'readonly',
         process: 'readonly',
         Buffer: 'readonly',
+        NodeJS: 'readonly',
+        jest: 'readonly',
+        beforeEach: 'readonly',
+        describe: 'readonly',
+        it: 'readonly',
+        expect: 'readonly',
       }
     },
     plugins: {

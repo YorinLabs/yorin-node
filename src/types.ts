@@ -14,7 +14,7 @@ export interface ServerEvent {
   user_id?: string | undefined;
   anonymous_user_id?: string | undefined;
   session_id?: string | undefined;
-  properties?: Record<string, any> | undefined;
+  properties?: Record<string, unknown> | undefined;
   page_url?: string | undefined;
   page_title?: string | undefined;
   referrer?: string | undefined;
@@ -31,7 +31,7 @@ export interface IdentifyProperties {
   $company?: string;
   $job_title?: string;
   $avatar_url?: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export interface GroupProperties {
@@ -44,7 +44,7 @@ export interface GroupProperties {
   $size?: string | number;
   $email?: string;
   $phone?: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export interface YorinResponse {
@@ -67,7 +67,7 @@ export interface PaymentProperties {
   product_id?: string;
   subscription_id?: string;
   invoice_id?: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export interface SubscriptionProperties {
@@ -95,5 +95,5 @@ export interface SubscriptionProperties {
 
   // Metadata
   provider?: string; // 'stripe', 'paddle', 'manual', etc.
-  [key: string]: any; // Custom fields
+  [key: string]: unknown; // Custom fields
 }

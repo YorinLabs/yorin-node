@@ -31,19 +31,25 @@ await yorin.track('purchase_completed', 'user_123', {
   product_id: 'prod_456'
 });
 
-// Identify a user
-await yorin.identify('user_123', {
+// Add or update a contact
+await yorin.addOrUpdateContact('user_123', {
   $email: 'john@example.com',
   $full_name: 'John Doe',
   plan: 'premium'
 });
 
-// Track a group
-await yorin.group('org_789', 'user_123', {
+// Add or update a group
+await yorin.addOrUpdateGroup('org_789', 'user_123', {
   $name: 'Acme Corp',
   $industry: 'Technology',
   employees: 500
 });
+
+// Delete a contact
+await yorin.deleteContact('user_123');
+
+// Delete a group
+await yorin.deleteGroup('org_789');
 
 // Track a payment
 await yorin.payment('user_123', {
@@ -89,32 +95,68 @@ await yorin.track('subscription_upgraded', 'user_123', {
 });
 ```
 
-### `identify(userId, properties?)`
+### `addOrUpdateContact(userId, properties?, options?)`
 
-Create or update user profiles.
+Create or update contact profiles for authenticated users. Uses server-side `addOrUpdateContact` event.
 
 ```javascript
-await yorin.identify('user_123', {
+await yorin.addOrUpdateContact('user_123', {
   $email: 'user@example.com',
   $full_name: 'John Doe',
   $company: 'Acme Corp',
   subscription_tier: 'premium',
   created_at: '2024-01-01'
+}, {
+  anonymousUserId: 'anon_123',
+  sessionId: 'session_456'
 });
 ```
 
-### `group(groupId, userId?, properties?)`
+### `addOrUpdateGroup(groupId, userId?, properties?, options?)`
 
-Associate users with groups/organizations.
+Create or update groups/organizations. Uses server-side `addOrUpdateGroup` event.
 
 ```javascript
-await yorin.group('company_456', 'user_123', {
+await yorin.addOrUpdateGroup('company_456', 'user_123', {
   $name: 'Acme Corp',
   $industry: 'SaaS',
   $size: 1000,
   plan: 'enterprise'
+}, {
+  anonymousUserId: 'anon_123',
+  sessionId: 'session_456'
 });
 ```
+
+### `deleteContact(userId, options?)`
+
+Soft delete a contact by their external user ID. Uses server-side `deleteContact` event.
+
+```javascript
+await yorin.deleteContact('user_123', {
+  anonymousUserId: 'anon_123',
+  sessionId: 'session_456'
+});
+```
+
+### `deleteGroup(groupId, userId?, options?)`
+
+Soft delete a group by its external group ID. Uses server-side `deleteGroup` event.
+
+```javascript
+await yorin.deleteGroup('company_456', 'user_123', {
+  anonymousUserId: 'anon_123',
+  sessionId: 'session_456'
+});
+```
+
+### `identify(userId, properties?)` **[DEPRECATED]**
+
+**Deprecated**: Use `addOrUpdateContact()` instead. This method will be removed in a future version.
+
+### `group(groupId, userId?, properties?)` **[DEPRECATED]**
+
+**Deprecated**: Use `addOrUpdateGroup()` instead. This method will be removed in a future version.
 
 ### `page(name?, userId?, properties?, options?)`
 
@@ -198,6 +240,24 @@ The SDK supports configuration through environment variables:
 - `YORIN_SECRET_KEY` - Your secret key (starts with `sk_`)
 - `YORIN_API_URL` - API endpoint (defaults to `https://ingest.yorin.io`)
 
+## Security Model
+
+Yorin uses different event processing based on API key type:
+
+### Server-Side Events (Secret Key `sk_`)
+- **Full CRUD Operations**: Create, update, and delete contacts and groups in PostgreSQL
+- **Analytics**: Events also stored in ClickHouse for analytics
+- **Event Names**: `addOrUpdateContact`, `addOrUpdateGroup`, `deleteContact`, `deleteGroup`
+- **Authentication**: Requires secret key (starts with `sk_`)
+- **Usage**: Backend services, secure environments only
+
+### Client-Side Events (Publishable Key `pk_`)
+- **Analytics Only**: Events stored in ClickHouse for analytics
+- **No Database Modifications**: Cannot create/update/delete contacts or groups
+- **Event Names**: `identify`, `groupIdentify`, `pageview`, `custom_events`
+- **Authentication**: Uses publishable key (starts with `pk_`)
+- **Usage**: Frontend applications, public environments
+
 ## Event Requirements
 
 Server events **require** either:
@@ -251,7 +311,11 @@ const properties: IdentifyProperties = {
   $full_name: 'John Doe'
 };
 
-await yorin.identify('user_123', properties);
+// Use new method names
+await yorin.addOrUpdateContact('user_123', properties);
+await yorin.addOrUpdateGroup('company_456', 'user_123', { $name: 'Acme Corp' });
+await yorin.deleteContact('user_123');
+await yorin.deleteGroup('company_456');
 ```
 
 ## License

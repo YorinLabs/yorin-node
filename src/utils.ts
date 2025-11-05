@@ -1,3 +1,5 @@
+import { setTimeout } from "timers";
+
 export class Logger {
   private debug: boolean;
 
@@ -5,17 +7,18 @@ export class Logger {
     this.debug = debug;
   }
 
-  log(...args: any[]): void {
+  log(...args: unknown[]): void {
     if (this.debug) {
+      // eslint-disable-next-line no-console
       console.log('[Yorin]', ...args);
     }
   }
 
-  error(...args: any[]): void {
+  error(...args: unknown[]): void {
     console.error('[Yorin Error]', ...args);
   }
 
-  warn(...args: any[]): void {
+  warn(...args: unknown[]): void {
     if (this.debug) {
       console.warn('[Yorin Warning]', ...args);
     }
@@ -27,16 +30,18 @@ export async function retryWithBackoff<T>(
   maxRetries: number = 3,
   initialDelay: number = 1000
 ): Promise<T> {
-  let lastError: any;
+  let lastError: Error = new Error('All retry attempts failed');
 
   for (let i = 0; i < maxRetries; i++) {
     try {
       return await fn();
     } catch (error) {
-      lastError = error;
+      lastError = error as Error;
       if (i < maxRetries - 1) {
         const delay = initialDelay * Math.pow(2, i);
-        await new Promise(resolve => setTimeout(resolve, delay));
+        await new Promise<void>(resolve => {
+          setTimeout(() => resolve(), delay);
+        });
       }
     }
   }
