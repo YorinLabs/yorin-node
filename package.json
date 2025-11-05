@@ -1,0 +1,75 @@
+{
+  "name": "yorin-nodejs",
+  "version": "0.1.0",
+  "description": "Yorin Analytics SDK for Node.js server environments",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "!dist/*.map"
+  ],
+  "type": "module",
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "lint": "eslint src tests --ext .ts",
+    "lint:fix": "eslint src tests --ext .ts --fix",
+    "typecheck": "tsc --noEmit",
+    "quality": "npm run lint && npm run typecheck && npm run test",
+    "prepublishOnly": "npm run quality && npm run build"
+  },
+  "keywords": [
+    "yorin",
+    "analytics",
+    "tracking",
+    "nodejs",
+    "server",
+    "typescript"
+  ],
+  "author": "Yorin Labs",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YorinLabs/yorin-nodejs.git"
+  },
+  "bugs": {
+    "url": "https://github.com/YorinLabs/yorin-nodejs/issues"
+  },
+  "homepage": "https://yorin.io",
+  "dependencies": {
+    "node-fetch": "^3.3.2"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^29.0.0",
+    "@rollup/plugin-node-resolve": "^16.0.3",
+    "@rollup/plugin-typescript": "^12.3.0",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.10.0",
+    "@typescript-eslint/eslint-plugin": "^8.46.3",
+    "@typescript-eslint/parser": "^8.46.3",
+    "eslint": "^9.39.1",
+    "jest": "^30.2.0",
+    "rollup": "^4.52.5",
+    "rollup-plugin-dts": "^6.2.3",
+    "@rollup/plugin-terser": "^0.4.4",
+    "ts-jest": "^29.4.5",
+    "tslib": "^2.8.1",
+    "typescript": "^5.9.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
