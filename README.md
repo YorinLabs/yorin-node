@@ -1,191 +1,236 @@
 # Yorin Node.js SDK
 
-Official Node.js SDK for Yorin Analytics - Server-side event tracking for your backend applications.
+The official Yorin Analytics SDK for Node.js server environments. Track user events, payments, subscriptions, and more with built-in batching, retry logic, and TypeScript support.
+
+## Features
+
+- 📊 **Complete Analytics Tracking**: Track custom events, page views, user identification, and more
+- 💳 **Payment & Subscription Tracking**: Built-in support for payment and subscription events
+- 👥 **User & Group Management**: Manage contacts and groups with dedicated event types
+- 🚀 **Optimized Performance**: Automatic batching, retry logic, and efficient network usage
+- 🔧 **TypeScript Support**: Full TypeScript definitions and type safety
+- 🛡️ **Robust Error Handling**: Built-in retry mechanism with exponential backoff
+- ⚙️ **Flexible Configuration**: Configurable batching, timeouts, and API endpoints
 
 ## Installation
 
 ```bash
 npm install yorin-nodejs
-# or
+```
+
+```bash
 yarn add yorin-nodejs
 ```
 
 ## Quick Start
 
-```javascript
-const { Yorin } = require('yorin-nodejs');
-// or
+```typescript
 import { Yorin } from 'yorin-nodejs';
 
-// Initialize with secret key
+// Initialize with your secret key
 const yorin = new Yorin({
-  secretKey: 'sk_your_secret_key', // or use YORIN_SECRET_KEY env var
-  apiUrl: 'https://ingest.yorin.io', // optional, or use YORIN_API_URL env var
-  debug: true // optional, enables logging
+  secretKey: 'sk_your_secret_key_here', // Get this from your Yorin dashboard
+  apiUrl: 'https://ingest.yorin.io',    // Optional: defaults to Yorin's ingest endpoint
+  debug: false                          // Optional: enable debug logging
 });
 
-// Track an event
-await yorin.track('purchase_completed', 'user_123', {
-  amount: 99.99,
-  currency: 'USD',
-  product_id: 'prod_456'
+// Track a custom event
+await yorin.track('button_clicked', 'user_123', {
+  button_name: 'signup',
+  page: 'landing'
 });
 
-// Add or update a contact
-await yorin.addOrUpdateContact('user_123', {
-  $email: 'john@example.com',
-  $full_name: 'John Doe',
-  plan: 'premium'
-});
-
-// Add or update a group
-await yorin.addOrUpdateGroup('org_789', 'user_123', {
-  $name: 'Acme Corp',
-  $industry: 'Technology',
-  employees: 500
-});
-
-// Delete a contact
-await yorin.deleteContact('user_123');
-
-// Delete a group
-await yorin.deleteGroup('org_789');
-
-// Track a payment
-await yorin.payment('user_123', {
-  payment_id: 'pay_abc123',
-  amount: 99.99,
-  currency: 'USD',
-  payment_method: 'credit_card',
-  payment_status: 'completed',
-  product_id: 'prod_premium',
-  stripe_session_id: 'cs_test_xyz789'
-});
-
-// Flush events (useful before shutdown)
-await yorin.flush();
-```
-
-## Configuration
-
-```javascript
-const yorin = new Yorin({
-  secretKey: 'sk_your_secret_key',    // Required: Your secret key
-  apiUrl: 'https://ingest.yorin.io',  // Optional: API endpoint
-  debug: false,                        // Optional: Enable debug logging
-  batchSize: 100,                      // Optional: Events per batch (default: 100)
-  flushInterval: 5000,                 // Optional: Auto-flush interval in ms (default: 5000)
-  enableBatching: true,                // Optional: Enable event batching (default: true)
-  retryAttempts: 3,                    // Optional: Number of retry attempts (default: 3)
-  retryDelay: 1000                     // Optional: Initial retry delay in ms (default: 1000)
-});
-```
-
-## API Methods
-
-### `track(eventName, userId?, properties?, options?)`
-
-Track custom events with properties.
-
-```javascript
-await yorin.track('subscription_upgraded', 'user_123', {
-  from_plan: 'basic',
-  to_plan: 'premium',
-  monthly_value: 49.99
-});
-```
-
-### `addOrUpdateContact(userId, properties?, options?)`
-
-Create or update contact profiles for authenticated users. Uses server-side `addOrUpdateContact` event.
-
-```javascript
+// Track user information
 await yorin.addOrUpdateContact('user_123', {
   $email: 'user@example.com',
   $full_name: 'John Doe',
+  $company: 'Acme Corp'
+});
+
+// Track payments
+await yorin.payment('user_123', {
+  amount: 99.99,
+  currency: 'USD',
+  payment_status: 'completed',
+  payment_method: 'credit_card'
+});
+
+// Don't forget to clean up when your app shuts down
+process.on('SIGTERM', () => {
+  yorin.destroy();
+});
+```
+
+## Configuration Options
+
+```typescript
+interface YorinConfig {
+  secretKey?: string;        // Your secret API key (required, must start with 'sk_')
+  apiUrl?: string;          // API endpoint (default: 'https://ingest.yorin.io')
+  debug?: boolean;          // Enable debug logging (default: false)
+  batchSize?: number;       // Events per batch (default: 100)
+  flushInterval?: number;   // Auto-flush interval in ms (default: 5000)
+  enableBatching?: boolean; // Enable event batching (default: true)
+  retryAttempts?: number;   // Number of retry attempts (default: 3)
+  retryDelay?: number;      // Initial retry delay in ms (default: 1000)
+}
+```
+
+You can also use environment variables:
+- `YORIN_SECRET_KEY` - Your secret key
+- `YORIN_API_URL` - API endpoint
+
+```typescript
+// Will automatically use environment variables
+const yorin = new Yorin();
+```
+
+## API Reference
+
+### Contact Management
+
+#### `addOrUpdateContact(userId, properties?, options?)`
+
+Create or update contact profiles.
+
+```typescript
+await yorin.addOrUpdateContact('user_123', {
+  $email: 'user@example.com',
+  $full_name: 'John Doe',
+  $first_name: 'John',
+  $last_name: 'Doe',
+  $phone: '+1-555-0123',
   $company: 'Acme Corp',
+  $job_title: 'Software Engineer',
+  $avatar_url: 'https://example.com/avatar.jpg',
+  // Custom properties
   subscription_tier: 'premium',
-  created_at: '2024-01-01'
+  signup_date: '2024-01-01'
 }, {
   anonymousUserId: 'anon_123',
-  sessionId: 'session_456'
+  sessionId: 'session_456',
+  timestamp: new Date().toISOString()
 });
 ```
 
-### `addOrUpdateGroup(groupId, userId?, properties?, options?)`
+**Standard Properties:**
+- `$email` - Email address
+- `$full_name` - Full name
+- `$first_name` - First name
+- `$last_name` - Last name
+- `$phone` - Phone number
+- `$company` - Company name
+- `$job_title` - Job title
+- `$avatar_url` - Avatar image URL
 
-Create or update groups/organizations. Uses server-side `addOrUpdateGroup` event.
+#### `deleteContact(userId, options?)`
 
-```javascript
-await yorin.addOrUpdateGroup('company_456', 'user_123', {
-  $name: 'Acme Corp',
-  $industry: 'SaaS',
-  $size: 1000,
-  plan: 'enterprise'
-}, {
-  anonymousUserId: 'anon_123',
-  sessionId: 'session_456'
-});
-```
+Delete a contact by user ID.
 
-### `deleteContact(userId, options?)`
-
-Soft delete a contact by their external user ID. Uses server-side `deleteContact` event.
-
-```javascript
+```typescript
 await yorin.deleteContact('user_123', {
   anonymousUserId: 'anon_123',
   sessionId: 'session_456'
 });
 ```
 
-### `deleteGroup(groupId, userId?, options?)`
+### Group Management
 
-Soft delete a group by its external group ID. Uses server-side `deleteGroup` event.
+#### `addOrUpdateGroup(groupId, userId?, properties?, options?)`
 
-```javascript
-await yorin.deleteGroup('company_456', 'user_123', {
+Create or update groups/organizations.
+
+```typescript
+await yorin.addOrUpdateGroup('company_456', 'user_123', {
+  $name: 'Acme Corp',
+  $description: 'A technology company',
+  $company: 'Acme Corporation',
+  $website: 'https://acme.com',
+  $industry: 'Technology',
+  $size: 1000,
+  $email: 'contact@acme.com',
+  $phone: '+1-555-0100',
+  // Custom properties
+  plan: 'enterprise',
+  founded_year: 2010
+}, {
   anonymousUserId: 'anon_123',
   sessionId: 'session_456'
 });
 ```
 
-### `identify(userId, properties?)` **[DEPRECATED]**
+**Standard Group Properties:**
+- `$name` - Group name
+- `$description` - Group description
+- `$company` - Company name
+- `$website` - Website URL
+- `$industry` - Industry
+- `$size` - Organization size (number or string)
+- `$email` - Contact email
+- `$phone` - Contact phone
 
-**Deprecated**: Use `addOrUpdateContact()` instead. This method will be removed in a future version.
+#### `deleteGroup(groupId, userId?, options?)`
 
-### `group(groupId, userId?, properties?)` **[DEPRECATED]**
+Delete a group by group ID.
 
-**Deprecated**: Use `addOrUpdateGroup()` instead. This method will be removed in a future version.
+```typescript
+await yorin.deleteGroup('company_456', 'user_123');
+```
 
-### `page(name?, userId?, properties?, options?)`
+### Event Tracking
 
-Track page views (server-rendered apps).
+#### `track(eventName, userId?, properties?, options?)`
 
-```javascript
-await yorin.page('Dashboard', 'user_123', {
-  section: 'analytics'
-}, {
-  url: 'https://app.example.com/dashboard',
-  title: 'Analytics Dashboard'
+Track custom events with properties. Requires either `userId` or `group_id` in properties.
+
+```typescript
+// User event
+await yorin.track('subscription_upgraded', 'user_123', {
+  from_plan: 'basic',
+  to_plan: 'premium',
+  monthly_value: 49.99
+});
+
+// Group event (no userId required)
+await yorin.track('team_created', undefined, {
+  group_id: 'company_456',
+  team_size: 5,
+  department: 'engineering'
 });
 ```
 
-### `payment(userId, paymentProperties, options?)`
+#### `page(name?, userId?, properties?, options?)`
 
-Track payment events with dedicated payment fields.
+Track page views.
 
-```javascript
+```typescript
+await yorin.page('Dashboard', 'user_123', {
+  section: 'analytics',
+  tab: 'overview'
+}, {
+  url: 'https://app.example.com/dashboard',
+  title: 'Analytics Dashboard',
+  referrer: 'https://app.example.com/home'
+});
+```
+
+### Payment Tracking
+
+#### `payment(userId, paymentProperties, options?)`
+
+Track payment events for analytics.
+
+```typescript
 await yorin.payment('user_123', {
-  payment_id: 'pay_stripe_abc123',
-  amount: 49.99,
-  currency: 'USD',
-  payment_method: 'stripe',
-  payment_status: 'completed',
-  stripe_session_id: 'cs_test_xyz789',
-  product_id: 'prod_monthly_plan',
-  subscription_id: 'sub_user123',
-  invoice_id: 'inv_202401001'
+  payment_id: 'pay_stripe_abc123',        // Optional: Payment identifier
+  amount: 49.99,                          // Required: Payment amount
+  currency: 'USD',                        // Required: Currency code
+  payment_method: 'credit_card',          // Optional: Payment method
+  payment_status: 'completed',            // Optional: Payment status
+  stripe_session_id: 'cs_test_xyz789',    // Optional: Stripe session ID
+  product_id: 'prod_monthly_plan',        // Optional: Product identifier
+  subscription_id: 'sub_user123',         // Optional: Subscription ID
+  invoice_id: 'inv_202401001'             // Optional: Invoice ID
 });
 ```
 
@@ -196,134 +241,347 @@ await yorin.payment('user_123', {
 - `'refunded'` - Payment was refunded
 - `'cancelled'` - Payment was cancelled
 
-### `trackBatch(events)`
+### Subscription Management
 
-Send multiple events in a single request.
+#### `subscription(subscriptionProperties, options?)`
 
-```javascript
+Track subscription events and manage subscription lifecycle.
+
+**Contact Subscription:**
+```typescript
+await yorin.subscription({
+  plan_id: 'premium_monthly',                    // Required: Plan identifier
+  plan_name: 'Premium Monthly Plan',             // Optional: Human-readable plan name
+  status: 'active',                             // Required: Subscription status
+  subscriber_type: 'contact',                   // Required: 'contact' or 'group'
+  subscriber_id: 'user_123',                    // Optional: Explicit subscriber ID
+  amount: 29.99,                               // Optional: Subscription amount
+  currency: 'USD',                             // Optional: Currency
+  billing_cycle: 'monthly',                    // Optional: Billing cycle
+  external_subscription_id: 'sub_stripe_123',  // Optional: External provider ID
+  provider: 'stripe',                          // Optional: Payment provider
+  started_at: new Date().toISOString(),        // Optional: Start date
+  current_period_start: new Date().toISOString(),
+  current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+  features: ['advanced_analytics', 'priority_support'],
+  description: 'Full access to premium features'
+}, {
+  userId: 'user_123'  // Required for contact subscriptions
+});
+```
+
+**Group Subscription:**
+```typescript
+await yorin.subscription({
+  plan_id: 'enterprise_plan',
+  plan_name: 'Enterprise Plan',
+  status: 'active',
+  subscriber_type: 'group',
+  amount: 999.99,
+  currency: 'USD',
+  billing_cycle: 'yearly',
+  setup_fee: 500.00,
+  billing_interval: 1,
+  features: ['unlimited_users', 'dedicated_support']
+}, {
+  groupId: 'company_456',  // Required for group subscriptions
+  userId: 'admin_user_123' // Optional: Admin user context
+});
+```
+
+**Subscription Status Options:**
+- `'trialing'` - In trial period
+- `'active'` - Active subscription
+- `'canceled'` - Cancelled subscription
+- `'incomplete'` - Incomplete setup
+- `'incomplete_expired'` - Incomplete setup expired
+- `'past_due'` - Payment past due
+- `'unpaid'` - Unpaid subscription
+- `'paused'` - Temporarily paused
+
+**Billing Cycle Options:**
+- `'monthly'`, `'yearly'`, `'quarterly'`, `'weekly'`, `'one_time'`, `'custom'`
+
+### Batch Operations
+
+#### `trackBatch(events)`
+
+Send multiple events in a single request for efficiency.
+
+```typescript
 await yorin.trackBatch([
   {
     event_name: 'login',
     user_id: 'user_123',
-    properties: { method: 'oauth' }
+    properties: { method: 'oauth' },
+    timestamp: new Date().toISOString()
   },
   {
     event_name: 'feature_used',
     user_id: 'user_123',
-    properties: { feature: 'export' }
+    properties: { feature: 'export' },
+    timestamp: new Date().toISOString()
   }
 ]);
 ```
 
-### `flush()`
+#### `flush()`
 
-Manually flush queued events.
+Manually flush queued events (useful before shutdown).
 
-```javascript
-// Flush before application shutdown
+```typescript
 await yorin.flush();
 ```
 
-### `destroy()`
+#### `destroy()`
 
 Clean up resources and flush remaining events.
 
-```javascript
-// On application shutdown
-yorin.destroy();
+```typescript
+yorin.destroy(); // Automatically flushes remaining events
 ```
 
-## Environment Variables
+## Advanced Usage
 
-The SDK supports configuration through environment variables:
+### Event Batching
 
-- `YORIN_SECRET_KEY` - Your secret key (starts with `sk_`)
-- `YORIN_API_URL` - API endpoint (defaults to `https://ingest.yorin.io`)
+Events are automatically batched for optimal performance:
 
-## Security Model
+```typescript
+const yorin = new Yorin({
+  secretKey: 'sk_...',
+  enableBatching: true,  // Enable batching (default: true)
+  batchSize: 100,        // Send when 100 events are queued (default: 100)
+  flushInterval: 5000    // Auto-flush every 5 seconds (default: 5000ms)
+});
+```
 
-Yorin uses different event processing based on API key type:
+- Events are sent when `batchSize` is reached
+- Events are auto-flushed every `flushInterval` milliseconds
+- Large batches (>1000 events) are automatically split into chunks
+- Disable batching by setting `enableBatching: false`
 
-### Server-Side Events (Secret Key `sk_`)
-- **Full CRUD Operations**: Create, update, and delete contacts and groups in PostgreSQL
-- **Analytics**: Events also stored in ClickHouse for analytics
-- **Event Names**: `addOrUpdateContact`, `addOrUpdateGroup`, `deleteContact`, `deleteGroup`
-- **Authentication**: Requires secret key (starts with `sk_`)
-- **Usage**: Backend services, secure environments only
-
-### Client-Side Events (Publishable Key `pk_`)
-- **Analytics Only**: Events stored in ClickHouse for analytics
-- **No Database Modifications**: Cannot create/update/delete contacts or groups
-- **Event Names**: `identify`, `groupIdentify`, `pageview`, `custom_events`
-- **Authentication**: Uses publishable key (starts with `pk_`)
-- **Usage**: Frontend applications, public environments
-
-## Event Requirements
-
-Server events **require** either:
-- `user_id` - Your external user identifier
-- `group_id` in properties - For group-level events
-
-## Property Naming
-
-Default properties use the `$` prefix and map to standard fields:
-- `$email`, `$full_name`, `$first_name`, `$last_name`
-- `$phone`, `$company`, `$job_title`, `$avatar_url`
-
-Custom properties don't need a prefix:
-- `subscription_plan`, `lifetime_value`, `last_login`
-
-## Batching
-
-Events are automatically batched for performance:
-- Batches send when reaching `batchSize` (default: 100)
-- Auto-flush every `flushInterval` ms (default: 5000)
-- Max 1000 events per batch (automatically split if larger)
-
-## Error Handling
+### Error Handling & Retries
 
 The SDK includes automatic retry with exponential backoff:
 
-```javascript
+```typescript
+const yorin = new Yorin({
+  secretKey: 'sk_...',
+  retryAttempts: 3,  // Number of retry attempts (default: 3)
+  retryDelay: 1000   // Initial delay between retries in ms (default: 1000)
+});
+
 try {
   await yorin.track('purchase', 'user_123', { amount: 100 });
 } catch (error) {
-  console.error('Failed to track event:', error);
+  // SDK already retried 3 times with exponential backoff
+  console.error('Failed to track event after retries:', error);
 }
 ```
 
-## TypeScript Support
+### Debug Logging
 
-Full TypeScript support with type definitions included:
+Enable debug logging to see SDK activity:
 
 ```typescript
-import { Yorin, YorinConfig, ServerEvent, IdentifyProperties } from 'yorin-nodejs';
+const yorin = new Yorin({
+  secretKey: 'sk_...',
+  debug: true  // Enables detailed logging
+});
+```
+
+## Framework Integration
+
+### Express.js Middleware
+
+```typescript
+import express from 'express';
+import { Yorin } from 'yorin-nodejs';
+
+const app = express();
+const yorin = new Yorin({
+  secretKey: process.env.YORIN_SECRET_KEY
+});
+
+// Track API requests
+app.use((req, res, next) => {
+  if (req.user) {
+    yorin.track('api_request', req.user.id, {
+      endpoint: req.path,
+      method: req.method,
+      user_agent: req.get('User-Agent')
+    });
+  }
+  next();
+});
+
+// Cleanup on shutdown
+process.on('SIGTERM', () => {
+  yorin.destroy();
+  process.exit(0);
+});
+```
+
+### Next.js API Routes
+
+```typescript
+// pages/api/users/[id].ts
+import { NextApiRequest, NextApiResponse } from 'next';
+import { Yorin } from 'yorin-nodejs';
+
+const yorin = new Yorin({
+  secretKey: process.env.YORIN_SECRET_KEY
+});
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const { id } = req.query;
+
+  if (req.method === 'POST') {
+    const userData = req.body;
+
+    // Update user and track in Yorin
+    await yorin.addOrUpdateContact(id as string, {
+      $email: userData.email,
+      $full_name: userData.name,
+      subscription_plan: userData.plan
+    });
+
+    res.json({ success: true });
+  }
+}
+```
+
+### TypeScript
+
+Full TypeScript support with comprehensive type definitions:
+
+```typescript
+import {
+  Yorin,
+  YorinConfig,
+  IdentifyProperties,
+  PaymentProperties,
+  SubscriptionProperties,
+  ServerEvent
+} from 'yorin-nodejs';
 
 const config: YorinConfig = {
   secretKey: 'sk_your_key',
-  debug: true
+  debug: true,
+  enableBatching: true
 };
 
 const yorin = new Yorin(config);
 
-const properties: IdentifyProperties = {
+const userProps: IdentifyProperties = {
   $email: 'user@example.com',
-  $full_name: 'John Doe'
+  $full_name: 'John Doe',
+  custom_field: 'value'
 };
 
-// Use new method names
-await yorin.addOrUpdateContact('user_123', properties);
-await yorin.addOrUpdateGroup('company_456', 'user_123', { $name: 'Acme Corp' });
-await yorin.deleteContact('user_123');
-await yorin.deleteGroup('company_456');
+const paymentProps: PaymentProperties = {
+  amount: 99.99,
+  currency: 'USD',
+  payment_status: 'completed'
+};
+
+// Type-safe operations
+await yorin.addOrUpdateContact('user_123', userProps);
+await yorin.payment('user_123', paymentProps);
 ```
+
+## Error Handling
+
+All methods throw errors that should be handled appropriately:
+
+```typescript
+try {
+  await yorin.track('event_name', 'user_123', { data: 'value' });
+} catch (error) {
+  if (error instanceof Error) {
+    console.error('Tracking failed:', error.message);
+    // Handle error (log, retry, etc.)
+  }
+}
+```
+
+Common error scenarios:
+- Network connectivity issues (automatically retried)
+- Invalid API credentials
+- Missing required parameters
+- Invalid event data
+
+## Best Practices
+
+1. **Always destroy the client on shutdown:**
+   ```typescript
+   process.on('SIGTERM', () => {
+     yorin.destroy();
+   });
+   ```
+
+2. **Use batching for high-volume applications:**
+   ```typescript
+   const yorin = new Yorin({
+     enableBatching: true,
+     batchSize: 100,
+     flushInterval: 5000
+   });
+   ```
+
+3. **Handle errors gracefully:**
+   ```typescript
+   try {
+     await yorin.track('event', 'user_id', data);
+   } catch (error) {
+     // Log but don't crash the app
+     console.error('Analytics tracking failed:', error);
+   }
+   ```
+
+4. **Use environment variables for configuration:**
+   ```bash
+   YORIN_SECRET_KEY=sk_your_secret_key
+   YORIN_API_URL=https://your-custom-endpoint.com
+   ```
+
+## Testing
+
+Run the test suite:
+
+```bash
+npm test
+```
+
+Run tests with coverage:
+
+```bash
+npm run test:coverage
+```
+
+Run linting and type checking:
+
+```bash
+npm run lint
+npm run typecheck
+```
+
+## Requirements
+
+- Node.js >= 18.0.0
+- TypeScript >= 4.5 (for TypeScript projects)
 
 ## License
 
-MIT
+MIT License - see LICENSE file for details.
 
 ## Support
 
-- Documentation: [https://docs.yorin.io](https://docs.yorin.io)
-- Issues: [GitHub Issues](https://github.com/YorinLabs/yorin-nodejs/issues)
-- Email: support@yorin.io
+- **Documentation**: [https://yorin.io/docs](https://yorin.io/docs)
+- **Issues**: [GitHub Issues](https://github.com/YorinLabs/yorin-nodejs/issues)
+- **Email**: support@yorin.io
+
+---
+
+Built with ❤️ by Yorin Labs

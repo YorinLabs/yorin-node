@@ -30,6 +30,9 @@ export class PaymentManager {
       payment_method,
       payment_status,
       stripe_session_id,
+      product_id,
+      subscription_id,
+      invoice_id,
       ...otherProperties
     } = paymentProperties;
 
@@ -41,6 +44,9 @@ export class PaymentManager {
       $currency: currency,
       $payment_method: payment_method,
       $status: payment_status,
+      $product_id: product_id,
+      $subscription_id: subscription_id,
+      $invoice_id: invoice_id,
       // Custom properties (no $ prefix, will go to properties array)
       stripe_session_id,
       ...otherProperties,

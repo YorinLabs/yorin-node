@@ -56,28 +56,42 @@ export class SubscriptionManager {
       current_period_start,
       current_period_end,
       cancelled_at,
+      ends_at,
+      description,
+      setup_fee,
+      billing_interval,
+      features,
+      notes,
       provider,
       ...customFields
     } = subscriptionProperties;
 
-    // Build properties with subscription data
+    // Build properties with subscription data (matching backend expectations)
     const properties: Record<string, unknown> = {
-      // Subscription properties with $ prefix (for potential ClickHouse extraction)
-      $subscription_id: external_subscription_id,
-      $plan_id: plan_id,
-      $plan_name: plan_name,
-      $subscription_status: status,
+      // Core subscription properties (these map to backend fields)
+      $external_subscription_id: external_subscription_id,
+      $plan_name: plan_name || plan_id, // Backend expects $plan_name
+      $plan: plan_name || plan_id, // Fallback field
+      $status: status, // Maps to subscription status
       $subscriber_type: subscriber_type,
       $subscriber_id: subscriber_id,
-      $subscription_amount: amount,
-      $subscription_currency: currency,
+      $amount: amount,
+      $currency: currency,
       $billing_cycle: billing_cycle,
+      $description: description,
+      $setup_fee: setup_fee,
+      $billing_interval: billing_interval,
+      $features: features,
+      $notes: notes,
+      $provider: provider,
+
+      // Date fields (backend expects these exact names)
       $started_at: started_at,
       $trial_ends_at: trial_ends_at,
-      $current_period_start: current_period_start,
       $current_period_end: current_period_end,
+      $current_period_start: current_period_start,
       $cancelled_at: cancelled_at,
-      $provider: provider,
+      $ends_at: ends_at,
 
       // Custom fields (no $ prefix)
       ...customFields,

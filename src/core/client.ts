@@ -148,4 +148,8 @@ export class YorinClient {
       }
     }, this.config.flushInterval);
   }
+
+  public getBatchSize(): number {
+    return this.eventBatch.length;
+  }
 }

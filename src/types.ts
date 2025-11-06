@@ -75,7 +75,7 @@ export interface SubscriptionProperties {
   external_subscription_id?: string; // From Stripe, Paddle, etc.
   plan_id: string;
   plan_name?: string;
-  status: 'active' | 'cancelled' | 'past_due' | 'trialing' | 'paused';
+  status: 'trialing' | 'active' | 'canceled' | 'incomplete' | 'incomplete_expired' | 'past_due' | 'unpaid' | 'paused';
 
   // Subscriber (polymorphic)
   subscriber_type: 'contact' | 'group';
@@ -84,7 +84,7 @@ export interface SubscriptionProperties {
   // Pricing
   amount?: number;
   currency?: string;
-  billing_cycle?: 'monthly' | 'yearly' | 'quarterly' | 'weekly';
+  billing_cycle?: 'monthly' | 'yearly' | 'quarterly' | 'weekly' | 'one_time' | 'custom';
 
   // Dates (ISO strings)
   started_at?: string;
@@ -92,6 +92,14 @@ export interface SubscriptionProperties {
   current_period_start?: string;
   current_period_end?: string;
   cancelled_at?: string;
+  ends_at?: string; // For subscription end date
+
+  // Additional subscription metadata
+  description?: string;
+  setup_fee?: number;
+  billing_interval?: number; // e.g., 2 for "every 2 months"
+  features?: string[]; // List of features included
+  notes?: string;
 
   // Metadata
   provider?: string; // 'stripe', 'paddle', 'manual', etc.

@@ -59,6 +59,7 @@ export class ContactManager {
     return {
       event_name: "deleteContact",
       user_id: userId,
+      properties: {},
       anonymous_user_id: options?.anonymousUserId,
       session_id: options?.sessionId,
       timestamp: options?.timestamp || new Date().toISOString(),
