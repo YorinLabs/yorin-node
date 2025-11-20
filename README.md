@@ -1,6 +1,6 @@
-# Yorin Node.js SDK
+# Aizu Node.js SDK
 
-The official Yorin Analytics SDK for Node.js server environments. Track user events, payments, subscriptions, and more with built-in batching, retry logic, and TypeScript support.
+The official Aizu Analytics SDK for Node.js server environments. Track user events, payments, subscriptions, and more with built-in batching, retry logic, and TypeScript support.
 
 ## Features
 
@@ -15,40 +15,40 @@ The official Yorin Analytics SDK for Node.js server environments. Track user eve
 ## Installation
 
 ```bash
-npm install yorin-nodejs
+npm install aizu-nodejs
 ```
 
 ```bash
-yarn add yorin-nodejs
+yarn add aizu-nodejs
 ```
 
 ## Quick Start
 
 ```typescript
-import { Yorin } from 'yorin-nodejs';
+import { Aizu } from 'aizu-nodejs';
 
 // Initialize with your secret key
-const yorin = new Yorin({
-  secretKey: 'sk_your_secret_key_here', // Get this from your Yorin dashboard
-  apiUrl: 'https://ingest.yorin.io',    // Optional: defaults to Yorin's ingest endpoint
+const aizu = new Aizu({
+  secretKey: 'sk_your_secret_key_here', // Get this from your Aizu dashboard
+  apiUrl: 'https://ingest.aizu.io',    // Optional: defaults to Aizu's ingest endpoint
   debug: false                          // Optional: enable debug logging
 });
 
 // Track a custom event
-await yorin.track('button_clicked', 'user_123', {
+await aizu.track('button_clicked', 'user_123', {
   button_name: 'signup',
   page: 'landing'
 });
 
 // Track user information
-await yorin.addOrUpdateContact('user_123', {
+await aizu.addOrUpdateContact('user_123', {
   $email: 'user@example.com',
   $full_name: 'John Doe',
   $company: 'Acme Corp'
 });
 
 // Track payments
-await yorin.payment('user_123', {
+await aizu.payment('user_123', {
   amount: 99.99,
   currency: 'USD',
   payment_status: 'completed',
@@ -57,16 +57,16 @@ await yorin.payment('user_123', {
 
 // Don't forget to clean up when your app shuts down
 process.on('SIGTERM', () => {
-  yorin.destroy();
+  aizu.destroy();
 });
 ```
 
 ## Configuration Options
 
 ```typescript
-interface YorinConfig {
+interface AizuConfig {
   secretKey?: string;        // Your secret API key (required, must start with 'sk_')
-  apiUrl?: string;          // API endpoint (default: 'https://ingest.yorin.io')
+  apiUrl?: string;          // API endpoint (default: 'https://ingest.aizu.io')
   debug?: boolean;          // Enable debug logging (default: false)
   batchSize?: number;       // Events per batch (default: 100)
   flushInterval?: number;   // Auto-flush interval in ms (default: 5000)
@@ -82,7 +82,7 @@ You can also use environment variables:
 
 ```typescript
 // Will automatically use environment variables
-const yorin = new Yorin();
+const aizu = new Aizu();
 ```
 
 ## API Reference
@@ -94,7 +94,7 @@ const yorin = new Yorin();
 Create or update contact profiles.
 
 ```typescript
-await yorin.addOrUpdateContact('user_123', {
+await aizu.addOrUpdateContact('user_123', {
   $email: 'user@example.com',
   $full_name: 'John Doe',
   $first_name: 'John',
@@ -128,7 +128,7 @@ await yorin.addOrUpdateContact('user_123', {
 Delete a contact by user ID.
 
 ```typescript
-await yorin.deleteContact('user_123', {
+await aizu.deleteContact('user_123', {
   anonymousUserId: 'anon_123',
   sessionId: 'session_456'
 });
@@ -141,7 +141,7 @@ await yorin.deleteContact('user_123', {
 Create or update groups/organizations.
 
 ```typescript
-await yorin.addOrUpdateGroup('company_456', 'user_123', {
+await aizu.addOrUpdateGroup('company_456', 'user_123', {
   $name: 'Acme Corp',
   $description: 'A technology company',
   $company: 'Acme Corporation',
@@ -174,7 +174,7 @@ await yorin.addOrUpdateGroup('company_456', 'user_123', {
 Delete a group by group ID.
 
 ```typescript
-await yorin.deleteGroup('company_456', 'user_123');
+await aizu.deleteGroup('company_456', 'user_123');
 ```
 
 ### Event Tracking
@@ -185,14 +185,14 @@ Track custom events with properties. Requires either `userId` or `group_id` in p
 
 ```typescript
 // User event
-await yorin.track('subscription_upgraded', 'user_123', {
+await aizu.track('subscription_upgraded', 'user_123', {
   from_plan: 'basic',
   to_plan: 'premium',
   monthly_value: 49.99
 });
 
 // Group event (no userId required)
-await yorin.track('team_created', undefined, {
+await aizu.track('team_created', undefined, {
   group_id: 'company_456',
   team_size: 5,
   department: 'engineering'
@@ -204,7 +204,7 @@ await yorin.track('team_created', undefined, {
 Track page views.
 
 ```typescript
-await yorin.page('Dashboard', 'user_123', {
+await aizu.page('Dashboard', 'user_123', {
   section: 'analytics',
   tab: 'overview'
 }, {
@@ -221,7 +221,7 @@ await yorin.page('Dashboard', 'user_123', {
 Track payment events for analytics.
 
 ```typescript
-await yorin.payment('user_123', {
+await aizu.payment('user_123', {
   payment_id: 'pay_stripe_abc123',        // Optional: Payment identifier
   amount: 49.99,                          // Required: Payment amount
   currency: 'USD',                        // Required: Currency code
@@ -249,7 +249,7 @@ Track subscription events and manage subscription lifecycle.
 
 **Contact Subscription:**
 ```typescript
-await yorin.subscription({
+await aizu.subscription({
   plan_id: 'premium_monthly',                    // Required: Plan identifier
   plan_name: 'Premium Monthly Plan',             // Optional: Human-readable plan name
   status: 'active',                             // Required: Subscription status
@@ -272,7 +272,7 @@ await yorin.subscription({
 
 **Group Subscription:**
 ```typescript
-await yorin.subscription({
+await aizu.subscription({
   plan_id: 'enterprise_plan',
   plan_name: 'Enterprise Plan',
   status: 'active',
@@ -309,7 +309,7 @@ await yorin.subscription({
 Send multiple events in a single request for efficiency.
 
 ```typescript
-await yorin.trackBatch([
+await aizu.trackBatch([
   {
     event_name: 'login',
     user_id: 'user_123',
@@ -330,7 +330,7 @@ await yorin.trackBatch([
 Manually flush queued events (useful before shutdown).
 
 ```typescript
-await yorin.flush();
+await aizu.flush();
 ```
 
 #### `destroy()`
@@ -338,7 +338,7 @@ await yorin.flush();
 Clean up resources and flush remaining events.
 
 ```typescript
-yorin.destroy(); // Automatically flushes remaining events
+aizu.destroy(); // Automatically flushes remaining events
 ```
 
 ## Advanced Usage
@@ -348,7 +348,7 @@ yorin.destroy(); // Automatically flushes remaining events
 Events are automatically batched for optimal performance:
 
 ```typescript
-const yorin = new Yorin({
+const aizu = new Aizu({
   secretKey: 'sk_...',
   enableBatching: true,  // Enable batching (default: true)
   batchSize: 100,        // Send when 100 events are queued (default: 100)
@@ -366,14 +366,14 @@ const yorin = new Yorin({
 The SDK includes automatic retry with exponential backoff:
 
 ```typescript
-const yorin = new Yorin({
+const aizu = new Aizu({
   secretKey: 'sk_...',
   retryAttempts: 3,  // Number of retry attempts (default: 3)
   retryDelay: 1000   // Initial delay between retries in ms (default: 1000)
 });
 
 try {
-  await yorin.track('purchase', 'user_123', { amount: 100 });
+  await aizu.track('purchase', 'user_123', { amount: 100 });
 } catch (error) {
   // SDK already retried 3 times with exponential backoff
   console.error('Failed to track event after retries:', error);
@@ -385,7 +385,7 @@ try {
 Enable debug logging to see SDK activity:
 
 ```typescript
-const yorin = new Yorin({
+const aizu = new Aizu({
   secretKey: 'sk_...',
   debug: true  // Enables detailed logging
 });
@@ -397,17 +397,17 @@ const yorin = new Yorin({
 
 ```typescript
 import express from 'express';
-import { Yorin } from 'yorin-nodejs';
+import { Aizu } from 'aizu-nodejs';
 
 const app = express();
-const yorin = new Yorin({
+const aizu = new Aizu({
   secretKey: process.env.YORIN_SECRET_KEY
 });
 
 // Track API requests
 app.use((req, res, next) => {
   if (req.user) {
-    yorin.track('api_request', req.user.id, {
+    aizu.track('api_request', req.user.id, {
       endpoint: req.path,
       method: req.method,
       user_agent: req.get('User-Agent')
@@ -418,7 +418,7 @@ app.use((req, res, next) => {
 
 // Cleanup on shutdown
 process.on('SIGTERM', () => {
-  yorin.destroy();
+  aizu.destroy();
   process.exit(0);
 });
 ```
@@ -428,9 +428,9 @@ process.on('SIGTERM', () => {
 ```typescript
 // pages/api/users/[id].ts
 import { NextApiRequest, NextApiResponse } from 'next';
-import { Yorin } from 'yorin-nodejs';
+import { Aizu } from 'aizu-nodejs';
 
-const yorin = new Yorin({
+const aizu = new Aizu({
   secretKey: process.env.YORIN_SECRET_KEY
 });
 
@@ -440,8 +440,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (req.method === 'POST') {
     const userData = req.body;
 
-    // Update user and track in Yorin
-    await yorin.addOrUpdateContact(id as string, {
+    // Update user and track in Aizu
+    await aizu.addOrUpdateContact(id as string, {
       $email: userData.email,
       $full_name: userData.name,
       subscription_plan: userData.plan
@@ -458,21 +458,21 @@ Full TypeScript support with comprehensive type definitions:
 
 ```typescript
 import {
-  Yorin,
-  YorinConfig,
+  Aizu,
+  AizuConfig,
   IdentifyProperties,
   PaymentProperties,
   SubscriptionProperties,
   ServerEvent
-} from 'yorin-nodejs';
+} from 'aizu-nodejs';
 
-const config: YorinConfig = {
+const config: AizuConfig = {
   secretKey: 'sk_your_key',
   debug: true,
   enableBatching: true
 };
 
-const yorin = new Yorin(config);
+const aizu = new Aizu(config);
 
 const userProps: IdentifyProperties = {
   $email: 'user@example.com',
@@ -487,8 +487,8 @@ const paymentProps: PaymentProperties = {
 };
 
 // Type-safe operations
-await yorin.addOrUpdateContact('user_123', userProps);
-await yorin.payment('user_123', paymentProps);
+await aizu.addOrUpdateContact('user_123', userProps);
+await aizu.payment('user_123', paymentProps);
 ```
 
 ## Error Handling
@@ -497,7 +497,7 @@ All methods throw errors that should be handled appropriately:
 
 ```typescript
 try {
-  await yorin.track('event_name', 'user_123', { data: 'value' });
+  await aizu.track('event_name', 'user_123', { data: 'value' });
 } catch (error) {
   if (error instanceof Error) {
     console.error('Tracking failed:', error.message);
@@ -517,13 +517,13 @@ Common error scenarios:
 1. **Always destroy the client on shutdown:**
    ```typescript
    process.on('SIGTERM', () => {
-     yorin.destroy();
+     aizu.destroy();
    });
    ```
 
 2. **Use batching for high-volume applications:**
    ```typescript
-   const yorin = new Yorin({
+   const aizu = new Aizu({
      enableBatching: true,
      batchSize: 100,
      flushInterval: 5000
@@ -533,7 +533,7 @@ Common error scenarios:
 3. **Handle errors gracefully:**
    ```typescript
    try {
-     await yorin.track('event', 'user_id', data);
+     await aizu.track('event', 'user_id', data);
    } catch (error) {
      // Log but don't crash the app
      console.error('Analytics tracking failed:', error);
@@ -578,10 +578,10 @@ MIT License - see LICENSE file for details.
 
 ## Support
 
-- **Documentation**: [https://yorin.io/docs](https://yorin.io/docs)
-- **Issues**: [GitHub Issues](https://github.com/YorinLabs/yorin-nodejs/issues)
-- **Email**: support@yorin.io
+- **Documentation**: [https://aizu.io/docs](https://aizu.io/docs)
+- **Issues**: [GitHub Issues](https://github.com/AizuLabs/aizu-nodejs/issues)
+- **Email**: support@aizu.io
 
 ---
 
-Built with ❤️ by Yorin Labs
+Built with ❤️ by Aizu Labs

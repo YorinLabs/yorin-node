@@ -1,6 +1,6 @@
 import { URL } from "url";
 import type {
-  YorinConfig,
+  AizuConfig,
   ServerEvent,
   IdentifyProperties,
   GroupProperties,
@@ -8,7 +8,7 @@ import type {
   SubscriptionProperties,
 } from "./types";
 import { validateSecretKey } from "./utils";
-import { YorinClient } from "./core/client";
+import { AizuClient } from "./core/client";
 import {
   ContactManager,
   GroupManager,
@@ -28,15 +28,15 @@ export * from "./utils";
 export * from "./events";
 export * from "./core/client";
 
-export class Yorin {
-  private client: YorinClient;
+export class Aizu {
+  private client: AizuClient;
 
-  constructor(config?: YorinConfig) {
+  constructor(config?: AizuConfig) {
     const secretKey = config?.secretKey || process.env.YORIN_SECRET_KEY || "";
 
     if (!secretKey) {
       throw new Error(
-        "Yorin secret key is required. Pass it in config or set YORIN_SECRET_KEY environment variable."
+        "Aizu secret key is required. Pass it in config or set YORIN_SECRET_KEY environment variable."
       );
     }
 
@@ -47,7 +47,7 @@ export class Yorin {
     }
 
     const apiUrl =
-      config?.apiUrl || process.env.YORIN_API_URL || "https://ingest.yorin.io";
+      config?.apiUrl || process.env.YORIN_API_URL || "https://ingest.aizu.io";
 
     try {
       new URL(apiUrl);
@@ -66,7 +66,7 @@ export class Yorin {
       retryDelay: config?.retryDelay ?? 1000,
     };
 
-    this.client = new YorinClient(clientConfig);
+    this.client = new AizuClient(clientConfig);
   }
 
   // === CONTACT MANAGEMENT ===

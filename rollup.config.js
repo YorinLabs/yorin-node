@@ -59,7 +59,7 @@ export default [
     output: [{
       file: 'dist/index.d.ts',
       format: 'es',
-      banner: '// Type definitions for Yorin Analytics Node.js SDK'
+      banner: '// Type definitions for Aizu Analytics Node.js SDK'
     }],
     plugins: [dts({
       respectExternal: true

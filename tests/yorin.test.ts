@@ -1,12 +1,12 @@
-import { Yorin } from "../src/index";
+import { Aizu } from "../src/index";
 
 // Mock timers for batching tests
 jest.useFakeTimers();
 
-describe("Yorin SDK", () => {
-  let yorin: Yorin;
+describe("Aizu SDK", () => {
+  let aizu: Aizu;
   const mockSecretKey = "sk_test_123456789";
-  const mockApiUrl = "https://test.yorin.io";
+  const mockApiUrl = "https://test.aizu.io";
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -19,7 +19,7 @@ describe("Yorin SDK", () => {
       text: async () => "Success",
     });
 
-    yorin = new Yorin({
+    aizu = new Aizu({
       secretKey: mockSecretKey,
       apiUrl: mockApiUrl,
       debug: false,
@@ -28,26 +28,26 @@ describe("Yorin SDK", () => {
   });
 
   afterEach(() => {
-    yorin.destroy();
+    aizu.destroy();
     jest.clearAllTimers();
   });
 
   describe("Constructor", () => {
     it("should initialize with valid config", () => {
-      const testYorin = new Yorin({
+      const testAizu = new Aizu({
         secretKey: "sk_valid_key",
         apiUrl: "https://valid.url.com",
       });
-      expect(testYorin).toBeDefined();
-      testYorin.destroy();
+      expect(testAizu).toBeDefined();
+      testAizu.destroy();
     });
 
     it("should throw error for missing secret key", () => {
-      expect(() => new Yorin()).toThrow("Yorin secret key is required");
+      expect(() => new Aizu()).toThrow("Aizu secret key is required");
     });
 
     it("should throw error for invalid secret key format", () => {
-      expect(() => new Yorin({ secretKey: "invalid_key" })).toThrow(
+      expect(() => new Aizu({ secretKey: "invalid_key" })).toThrow(
         "Invalid secret key format",
       );
     });
@@ -55,7 +55,7 @@ describe("Yorin SDK", () => {
     it("should throw error for invalid API URL", () => {
       expect(
         () =>
-          new Yorin({
+          new Aizu({
             secretKey: "sk_valid_key",
             apiUrl: "not-a-url",
           }),
@@ -64,9 +64,9 @@ describe("Yorin SDK", () => {
 
     it("should use environment variables when config not provided", () => {
       process.env.YORIN_SECRET_KEY = "sk_env_key";
-      process.env.YORIN_API_URL = "https://env.yorin.io";
+      process.env.YORIN_API_URL = "https://env.aizu.io";
 
-      const yorinFromEnv = new Yorin();
+      const yorinFromEnv = new Aizu();
       expect(yorinFromEnv).toBeDefined();
 
       // Clean up
@@ -78,7 +78,7 @@ describe("Yorin SDK", () => {
 
   describe("Contact Management", () => {
     it("should add or update contact", async () => {
-      await yorin.addOrUpdateContact("user_123", {
+      await aizu.addOrUpdateContact("user_123", {
         $email: "test@example.com",
         $full_name: "Test User",
         $company: "Test Corp",
@@ -98,7 +98,7 @@ describe("Yorin SDK", () => {
     });
 
     it("should delete contact", async () => {
-      await yorin.deleteContact("user_123");
+      await aizu.deleteContact("user_123");
 
       expect(global.fetch).toHaveBeenCalledWith(
         `${mockApiUrl}/v1/events`,
@@ -116,7 +116,7 @@ describe("Yorin SDK", () => {
         timestamp: new Date().toISOString(),
       };
 
-      await yorin.addOrUpdateContact(
+      await aizu.addOrUpdateContact(
         "user_123",
         {
           $email: "test@example.com",
@@ -135,7 +135,7 @@ describe("Yorin SDK", () => {
 
   describe("Group Management", () => {
     it("should add or update group", async () => {
-      await yorin.addOrUpdateGroup("group_123", "user_123", {
+      await aizu.addOrUpdateGroup("group_123", "user_123", {
         $name: "Test Company",
         $industry: "Technology",
       });
@@ -149,7 +149,7 @@ describe("Yorin SDK", () => {
     });
 
     it("should delete group", async () => {
-      await yorin.deleteGroup("group_123", "user_123");
+      await aizu.deleteGroup("group_123", "user_123");
 
       expect(global.fetch).toHaveBeenCalledWith(
         `${mockApiUrl}/v1/events`,
@@ -160,7 +160,7 @@ describe("Yorin SDK", () => {
     });
 
     it("should handle group operations without user ID", async () => {
-      await yorin.addOrUpdateGroup("group_123", undefined, {
+      await aizu.addOrUpdateGroup("group_123", undefined, {
         $name: "Test Company",
       });
 
@@ -183,7 +183,7 @@ describe("Yorin SDK", () => {
         product_id: "prod_premium",
       };
 
-      await yorin.payment("user_123", paymentProperties);
+      await aizu.payment("user_123", paymentProperties);
 
       expect(global.fetch).toHaveBeenCalledWith(
         `${mockApiUrl}/v1/events`,
@@ -213,7 +213,7 @@ describe("Yorin SDK", () => {
         timestamp: new Date().toISOString(),
       };
 
-      await yorin.payment("user_123", paymentProperties, options);
+      await aizu.payment("user_123", paymentProperties, options);
 
       const callArgs = (global.fetch as jest.Mock).mock.calls[0];
       const requestBody = JSON.parse(callArgs[1].body);
@@ -234,7 +234,7 @@ describe("Yorin SDK", () => {
         currency: "USD",
       };
 
-      await yorin.subscription(subscriptionProperties, {
+      await aizu.subscription(subscriptionProperties, {
         userId: "user_123",
       });
 
@@ -262,7 +262,7 @@ describe("Yorin SDK", () => {
         subscriber_id: "group_123",
       };
 
-      await yorin.subscription(subscriptionProperties, {
+      await aizu.subscription(subscriptionProperties, {
         groupId: "group_123",
       });
 
@@ -276,7 +276,7 @@ describe("Yorin SDK", () => {
 
   describe("General Tracking", () => {
     it("should track custom events", async () => {
-      await yorin.track("custom_event", "user_123", {
+      await aizu.track("custom_event", "user_123", {
         property1: "value1",
         property2: 42,
       });
@@ -297,7 +297,7 @@ describe("Yorin SDK", () => {
     });
 
     it("should track page views", async () => {
-      await yorin.page(
+      await aizu.page(
         "Dashboard",
         "user_123",
         {
@@ -325,7 +325,7 @@ describe("Yorin SDK", () => {
     });
 
     it("should handle track events without user ID but with group_id", async () => {
-      await yorin.track("group_event", undefined, {
+      await aizu.track("group_event", undefined, {
         group_id: "group_123",
         action: "upgraded",
       });
@@ -340,9 +340,9 @@ describe("Yorin SDK", () => {
 
   describe("Batch Operations", () => {
     beforeEach(() => {
-      // Create yorin with batching enabled
-      yorin.destroy();
-      yorin = new Yorin({
+      // Create aizu with batching enabled
+      aizu.destroy();
+      aizu = new Aizu({
         secretKey: mockSecretKey,
         apiUrl: mockApiUrl,
         debug: false,
@@ -354,14 +354,14 @@ describe("Yorin SDK", () => {
 
     afterEach(() => {
       // Ensure cleanup for batch-enabled instance
-      yorin.destroy();
+      aizu.destroy();
     });
 
     it("should send events in batches", async () => {
       // Send 3 events to trigger batch
-      await yorin.track("event1", "user_1");
-      await yorin.track("event2", "user_2");
-      await yorin.track("event3", "user_3"); // This should trigger the batch
+      await aizu.track("event1", "user_1");
+      await aizu.track("event2", "user_2");
+      await aizu.track("event3", "user_3"); // This should trigger the batch
 
       expect(global.fetch).toHaveBeenCalledTimes(1);
 
@@ -373,13 +373,13 @@ describe("Yorin SDK", () => {
     });
 
     it("should flush batch manually", async () => {
-      await yorin.track("event1", "user_1");
-      await yorin.track("event2", "user_2");
+      await aizu.track("event1", "user_1");
+      await aizu.track("event2", "user_2");
 
       // Should not have sent yet (batch size is 3)
       expect(global.fetch).toHaveBeenCalledTimes(0);
 
-      await yorin.flush();
+      await aizu.flush();
 
       expect(global.fetch).toHaveBeenCalledTimes(1);
       const callArgs = (global.fetch as jest.Mock).mock.calls[0];
@@ -390,7 +390,7 @@ describe("Yorin SDK", () => {
     });
 
     it.skip("should auto-flush on timer", async () => {
-      await yorin.track("event1", "user_1");
+      await aizu.track("event1", "user_1");
 
       // Should not have sent yet
       expect(global.fetch).toHaveBeenCalledTimes(0);
@@ -411,7 +411,7 @@ describe("Yorin SDK", () => {
         properties: { index: i },
       }));
 
-      await yorin.trackBatch(events);
+      await aizu.trackBatch(events);
 
       // Should split into 2 batches (1000 + 500)
       expect(global.fetch).toHaveBeenCalledTimes(2);

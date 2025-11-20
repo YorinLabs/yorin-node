@@ -1,6 +1,6 @@
-# Contributing to Yorin Analytics Node.js SDK
+# Contributing to Aizu Analytics Node.js SDK
 
-Thank you for your interest in contributing to the Yorin Analytics Node.js SDK! We welcome contributions from the community.
+Thank you for your interest in contributing to the Aizu Analytics Node.js SDK! We welcome contributions from the community.
 
 ## How to Contribute
 
@@ -15,8 +15,8 @@ Thank you for your interest in contributing to the Yorin Analytics Node.js SDK! 
 1. **Fork the repository** on GitHub
 2. **Clone your fork** locally:
    ```bash
-   git clone https://github.com/YOUR_USERNAME/yorin-nodejs.git
-   cd yorin-nodejs
+   git clone https://github.com/YOUR_USERNAME/aizu-nodejs.git
+   cd aizu-nodejs
    ```
 3. **Install dependencies**:
    ```bash
@@ -84,9 +84,9 @@ Thank you for your interest in contributing to the Yorin Analytics Node.js SDK! 
 
 If you encounter issues or have questions about using the SDK, please:
 
-1. **Check the Documentation**: Review our comprehensive [README](./README.md) and [official documentation](https://docs.yorin.io)
-2. **Search Existing Issues**: Look through [existing issues](https://github.com/YorinLabs/yorin-nodejs/issues) to see if your question has been addressed
-3. **Report Bugs**: If you find a bug, please [open an issue](https://github.com/YorinLabs/yorin-nodejs/issues/new) with:
+1. **Check the Documentation**: Review our comprehensive [README](./README.md) and [official documentation](https://docs.aizu.io)
+2. **Search Existing Issues**: Look through [existing issues](https://github.com/AizuLabs/aizu-nodejs/issues) to see if your question has been addressed
+3. **Report Bugs**: If you find a bug, please [open an issue](https://github.com/AizuLabs/aizu-nodejs/issues/new) with:
    - A clear description of the problem
    - Steps to reproduce the issue
    - Expected vs actual behavior
@@ -96,7 +96,7 @@ If you encounter issues or have questions about using the SDK, please:
 
 For feature requests or suggestions, please:
 
-1. [Open an issue](https://github.com/YorinLabs/yorin-nodejs/issues/new) with the "enhancement" label
+1. [Open an issue](https://github.com/AizuLabs/aizu-nodejs/issues/new) with the "enhancement" label
 2. Provide a detailed description of the proposed feature
 3. Explain the use case and potential benefits
 
@@ -104,8 +104,8 @@ For feature requests or suggestions, please:
 
 For enterprise support, custom implementations, or priority assistance, please contact us at:
 
-- **Email**: support@yorin.io
-- **Website**: [https://yorin.io](https://yorin.io)
+- **Email**: support@aizu.io
+- **Website**: [https://aizu.io](https://aizu.io)
 
 ## License
 
@@ -113,4 +113,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-**Yorin Labs Team**
+**Aizu Labs Team**

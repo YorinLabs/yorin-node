@@ -5,7 +5,7 @@ updates:
     schedule:
       interval: "weekly"
     assignees:
-      - "yorin-team"
+      - "aizu-team"
     commit-message:
       prefix: "chore"
       include: "scope"

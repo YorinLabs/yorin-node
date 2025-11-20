@@ -10,17 +10,17 @@ export class Logger {
   log(...args: unknown[]): void {
     if (this.debug) {
       // eslint-disable-next-line no-console
-      console.log('[Yorin]', ...args);
+      console.log('[Aizu]', ...args);
     }
   }
 
   error(...args: unknown[]): void {
-    console.error('[Yorin Error]', ...args);
+    console.error('[Aizu Error]', ...args);
   }
 
   warn(...args: unknown[]): void {
     if (this.debug) {
-      console.warn('[Yorin Warning]', ...args);
+      console.warn('[Aizu Warning]', ...args);
     }
   }
 }

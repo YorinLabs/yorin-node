@@ -1,11 +1,11 @@
-import { YorinClient, type ClientConfig } from "../src/core/client";
+import { AizuClient, type ClientConfig } from "../src/core/client";
 import type { ServerEvent } from "../src/types";
 
 // Mock timers
 jest.useFakeTimers();
 
-describe("YorinClient", () => {
-  let client: YorinClient;
+describe("AizuClient", () => {
+  let client: AizuClient;
   let config: ClientConfig;
 
   beforeEach(() => {
@@ -13,7 +13,7 @@ describe("YorinClient", () => {
 
     config = {
       secretKey: "sk_test_123",
-      apiUrl: "https://test.yorin.io",
+      apiUrl: "https://test.aizu.io",
       debug: false,
       batchSize: 3,
       flushInterval: 1000,
@@ -28,7 +28,7 @@ describe("YorinClient", () => {
       text: async () => "Success",
     });
 
-    client = new YorinClient(config);
+    client = new AizuClient(config);
   });
 
   afterEach(() => {
@@ -48,7 +48,7 @@ describe("YorinClient", () => {
 
     it("should handle batching disabled", () => {
       const noBatchConfig = { ...config, enableBatching: false };
-      const noBatchClient = new YorinClient(noBatchConfig);
+      const noBatchClient = new AizuClient(noBatchConfig);
 
       expect(noBatchClient).toBeDefined();
       expect(noBatchClient.getBatchSize()).toBe(0);
@@ -75,7 +75,7 @@ describe("YorinClient", () => {
     it("should send event immediately when batching disabled", async () => {
       client.destroy();
       const noBatchConfig = { ...config, enableBatching: false };
-      const noBatchClient = new YorinClient(noBatchConfig);
+      const noBatchClient = new AizuClient(noBatchConfig);
 
       await noBatchClient.sendEvent(mockEvent);
 
@@ -236,7 +236,7 @@ describe("YorinClient", () => {
   describe("Error handling", () => {
     it("should handle HTTP errors", async () => {
       // Create client with batching disabled and no retries for immediate error
-      const noBatchClient = new YorinClient({
+      const noBatchClient = new AizuClient({
         ...config,
         enableBatching: false,
         retryAttempts: 1,
@@ -264,7 +264,7 @@ describe("YorinClient", () => {
 
     it("should handle API response errors", async () => {
       // Create client with batching disabled and no retries
-      const noBatchClient = new YorinClient({
+      const noBatchClient = new AizuClient({
         ...config,
         enableBatching: false,
         retryAttempts: 1,
@@ -310,7 +310,7 @@ describe("YorinClient", () => {
 
       // Disable batching for this test
       client.destroy();
-      const retryClient = new YorinClient({
+      const retryClient = new AizuClient({
         ...config,
         enableBatching: false,
         retryAttempts: 3,
@@ -335,7 +335,7 @@ describe("YorinClient", () => {
 
       // Disable batching for this test
       client.destroy();
-      const retryClient = new YorinClient({
+      const retryClient = new AizuClient({
         ...config,
         enableBatching: false,
         retryAttempts: 2,

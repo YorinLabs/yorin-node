@@ -1,7 +1,7 @@
 {
-  "name": "yorin-nodejs",
+  "name": "aizu-nodejs",
   "version": "0.1.0",
-  "description": "Yorin Analytics SDK for Node.js server environments",
+  "description": "Aizu Analytics SDK for Node.js server environments",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -32,23 +32,23 @@
     "prepublishOnly": "npm run quality && npm run build"
   },
   "keywords": [
-    "yorin",
+    "aizu",
     "analytics",
     "tracking",
     "nodejs",
     "server",
     "typescript"
   ],
-  "author": "Yorin Labs",
+  "author": "Aizu Labs",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/YorinLabs/yorin-nodejs.git"
+    "url": "git+https://github.com/AizuLabs/aizu-nodejs.git"
   },
   "bugs": {
-    "url": "https://github.com/YorinLabs/yorin-nodejs/issues"
+    "url": "https://github.com/AizuLabs/aizu-nodejs/issues"
   },
-  "homepage": "https://yorin.io",
+  "homepage": "https://aizu.io",
   "dependencies": {
     "node-fetch": "^3.3.2"
   },

@@ -33,7 +33,7 @@ describe("Logger", () => {
     it("should log messages when debug is enabled", () => {
       logger.log("test message", { data: "value" });
 
-      expect(console.log).toHaveBeenCalledWith("[Yorin]", "test message", {
+      expect(console.log).toHaveBeenCalledWith("[Aizu]", "test message", {
         data: "value",
       });
     });
@@ -42,7 +42,7 @@ describe("Logger", () => {
       logger.warn("warning message");
 
       expect(console.warn).toHaveBeenCalledWith(
-        "[Yorin Warning]",
+        "[Aizu Warning]",
         "warning message",
       );
     });
@@ -51,7 +51,7 @@ describe("Logger", () => {
       logger.error("error message");
 
       expect(console.error).toHaveBeenCalledWith(
-        "[Yorin Error]",
+        "[Aizu Error]",
         "error message",
       );
     });
@@ -80,7 +80,7 @@ describe("Logger", () => {
       logger.error("error message");
 
       expect(console.error).toHaveBeenCalledWith(
-        "[Yorin Error]",
+        "[Aizu Error]",
         "error message",
       );
     });

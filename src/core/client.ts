@@ -1,6 +1,6 @@
 import fetch from "node-fetch";
 import { setInterval, clearInterval } from "timers";
-import type { ServerEvent, YorinResponse } from "../types";
+import type { ServerEvent, AizuResponse } from "../types";
 import { Logger, retryWithBackoff, chunkArray } from "../utils";
 
 export interface ClientConfig {
@@ -14,7 +14,7 @@ export interface ClientConfig {
   retryDelay: number;
 }
 
-export class YorinClient {
+export class AizuClient {
   private config: ClientConfig;
   private logger: Logger;
   private eventBatch: ServerEvent[] = [];
@@ -24,7 +24,7 @@ export class YorinClient {
     this.config = config;
     this.logger = new Logger(this.config.debug);
 
-    this.logger.log("Yorin client initialized with config:", {
+    this.logger.log("Aizu client initialized with config:", {
       apiUrl: this.config.apiUrl,
       batchSize: this.config.batchSize,
       flushInterval: this.config.flushInterval,
@@ -117,7 +117,7 @@ export class YorinClient {
             throw new Error(`HTTP ${response.status}: ${errorText}`);
           }
 
-          const result = (await response.json()) as YorinResponse;
+          const result = (await response.json()) as AizuResponse;
 
           if (!result.success) {
             throw new Error(result.message || "Failed to send events");

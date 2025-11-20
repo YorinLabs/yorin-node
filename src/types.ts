@@ -1,4 +1,4 @@
-export interface YorinConfig {
+export interface AizuConfig {
   secretKey?: string;
   apiUrl?: string;
   debug?: boolean;
@@ -47,7 +47,7 @@ export interface GroupProperties {
   [key: string]: unknown;
 }
 
-export interface YorinResponse {
+export interface AizuResponse {
   success: boolean;
   message: string;
 }
